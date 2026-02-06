@@ -195,7 +195,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build & Push Docker image
+      - name: Build & Push Docker image (DockerHub)
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -207,3 +207,23 @@ jobs:
           tags: |
             lukechannings/moviematch:${{ needs.build_info.outputs.version }}
             ${{ needs.build_info.outputs.prerelease == 'false' && 'lukechannings/moviematch:latest' || 'lukechannings/moviematch:develop' }}
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Docker image (GHCR)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./configs/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          build-args: |
+            VERSION=v${{needs.build_info.outputs.version}}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/moviematch:${{ needs.build_info.outputs.version }}
+            ${{ needs.build_info.outputs.prerelease == 'false' && format('ghcr.io/{0}/moviematch:latest', github.repository_owner) || format('ghcr.io/{0}/moviematch:develop', github.repository_owner) }}
