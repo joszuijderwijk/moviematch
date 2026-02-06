@@ -4,8 +4,8 @@ version := `cat VERSION`
 build_dir := justfile_directory() + "/build"
 ui_dir := justfile_directory() + "/web/app"
 ui_build_dir := ui_dir + "/build"
-deno_options := "-A --unstable --import-map=./configs/import_map.json"
-deno_compile_options := "--unstable --allow-read --allow-write --allow-env --allow-net"
+deno_options := "-A --unstable-http --unstable-ffi --import-map=./configs/import_map.json"
+deno_compile_options := "--unstable-http --allow-read --allow-write --allow-env --allow-net"
 deno_fmt_ignore := build_dir + "," + ui_dir + "/node_modules" + "," + ui_build_dir
 default_target := os() + "-" + arch()
 
@@ -41,7 +41,7 @@ build-bundle: clean build-ui
   mkdir -p {{build_dir}}
   deno run {{ deno_options }} ./cmd/moviematch/pkger.ts {{ui_build_dir}} web/template/index.html configs/localization VERSION > {{build_dir}}/pkg.ts
   sed 's/pkger.ts/pkger_release.ts/' < configs/import_map.json > {{build_dir}}/import_map.json
-  deno bundle --unstable --lock deps.lock --import-map=build/import_map.json ./cmd/moviematch/main.ts > {{build_dir}}/moviematch.js
+  deno bundle --unstable-http --lock deps.lock --import-map=build/import_map.json ./cmd/moviematch/main.ts > {{build_dir}}/moviematch.js
 
 build-binary target=default_target: build-bundle
   #!/usr/bin/env bash
@@ -74,7 +74,7 @@ compile rust_target target:
 
 test:
   # https://github.com/denoland/deno/issues/9284
-  deno test {{ deno_options }} internal
+  deno test --unstable-http --unstable-ffi -A --import-map=./configs/import_map.json internal
 
 test-e2e target:
   #!/bin/bash
@@ -108,8 +108,8 @@ install-node-modules:
   cd {{ui_dir}} && npm install
 
 install-deno-dependencies:
-  deno install --unstable -qAf https://deno.land/x/denon@2.4.7/denon.ts
-  PUPPETEER_PRODUCT=chrome deno run --unstable -A https://deno.land/x/puppeteer@9.0.0/install.ts
+  deno install --unstable-http --unstable-ffi -qAf https://deno.land/x/denon@2.4.7/denon.ts
+  PUPPETEER_PRODUCT=chrome deno run --unstable-http --unstable-ffi -A https://deno.land/x/puppeteer@9.0.0/install.ts
 
 clean: clean-ui clean-server
 
@@ -128,7 +128,7 @@ format:
   deno fmt --ignore={{deno_fmt_ignore}}
 
 update-lockfile:
-  deno cache --reload --unstable --lock deps.lock --lock-write --import-map=./configs/import_map.json ./cmd/moviematch/main.ts
+  deno cache --reload --unstable-http --unstable-ffi --lock deps.lock --lock-write --import-map=./configs/import_map.json ./cmd/moviematch/main.ts
 
 install-githooks:
   #!/bin/bash

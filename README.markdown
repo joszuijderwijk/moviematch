@@ -25,11 +25,38 @@ If two (or more) people swipe right on the same movie, it'll show up in everyone
 
 ## Getting started
 
+### Using Pre-built Docker Image
+
 `docker run -it -e PLEX_URL=<Plex URL> -e PLEX_TOKEN=<Your Token> -p 8000:8000 --pull always lukechannings/moviematch:latest`
 
 **Note**: There is also documentation for **docker-compose** over [here](./docs/docker-compose.markdown) 👈
 
+### Building and Running from Source
+
+For Ubuntu/Linux, use the provided build script to automatically compile and run moviematch:
+
+```bash
+# Set your Plex credentials
+export PLEX_URL="https://your-plex-server.com"
+export PLEX_TOKEN="your-plex-token"
+
+# Run the build script (optionally specify target: linux-amd64, linux-arm64, etc.)
+chmod +x build.sh
+./build.sh [target]
+```
+
+The script will:
+1. Verify all prerequisites (Deno, Node.js, Just)
+2. Build the UI and compile the binary
+3. Create a Docker image
+4. Generate a docker-compose.yml file
+5. Start moviematch via docker-compose
+
+Access MovieMatch at `http://localhost:8000`
+
 ## Configuration
+
+⚠️ If you're using MovieMatch v1 please refer to [**these options**](https://github.com/LukeChannings/moviematch/tree/v1#configuration). ⚠️
 
 ⚠️ If you're using MovieMatch v1 please refer to [**these options**](https://github.com/LukeChannings/moviematch/tree/v1#configuration). ⚠️
 

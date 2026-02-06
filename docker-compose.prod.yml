@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  moviematch:
+    image: moviematch:latest
+    container_name: moviematch
+    environment:
+      PLEX_URL: ${PLEX_URL}
+      PLEX_TOKEN: ${PLEX_TOKEN}
+      HOST: ${HOST:-0.0.0.0}
+      PORT: ${PORT:-8000}
+    ports:
+      - "${PORT:-8000}:8000"
+    restart: unless-stopped
+    networks:
+      - moviematch
+
+networks:
+  moviematch:
+    driver: bridge
