@@ -17,7 +17,7 @@ on:
         required: true
 
 env:
-  DENO_VERSION: 1.10.1
+  DENO_VERSION: 1.40.0
 
 jobs:
   build_info:
@@ -29,7 +29,7 @@ jobs:
       existing_release: ${{ steps.metadata.outputs.existing_release }}
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Get metadata
         id: metadata
         run: |
@@ -54,9 +54,9 @@ jobs:
     needs: build_info
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup Deno
-        uses: denolib/setup-deno@v2
+        uses: denoland/setup-deno@v1
         with:
           deno-version: ${{ env.DENO_VERSION }}
       - name: Setup Just
@@ -80,7 +80,7 @@ jobs:
         run: |
           RELEASE_NOTES=$(deno eval -p "(await Deno.readTextFile('./RELEASE_NOTES.markdown')).match(/##\sv${{needs.build_info.outputs.version}}(?<notes>(.|\n)*?)^##\s/m)?.groups?.notes?.trim() ?? ''")
           echo "${RELEASE_NOTES}" > build/RELEASE_NOTES.markdown
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: build
           path: ./build
@@ -103,16 +103,16 @@ jobs:
             name: Windows
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup Deno
-        uses: denolib/setup-deno@v2
+        uses: denoland/setup-deno@v1
         with:
           deno-version: ${{ env.DENO_VERSION }}
       - name: Setup Just
         uses: extractions/setup-just@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: build
           path: build
@@ -137,8 +137,8 @@ jobs:
       - build_info
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
           name: build
           path: build
@@ -181,22 +181,22 @@ jobs:
       - build_info
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
           name: build
           path: build
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build & Push Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./configs/Dockerfile
