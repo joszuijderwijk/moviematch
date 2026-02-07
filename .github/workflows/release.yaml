@@ -115,12 +115,12 @@ jobs:
           targets=("linux-amd64" "linux-arm64" "macos-amd64" "macos-arm64" "windows-amd64")
           assets=("-a" "./build/moviematch.js")
           for target in ${targets[*]}; do
-            if [ -d "./build/${target}" ]; then
-              zip -r -j "./build/${target}.zip" ./build/${target}/*
-              assets+=("-a" "./build/${target}.zip")
-            else
-              echo "Warning: ./build/${target} directory not found, skipping"
+            if [ ! -d "./build/${target}" ]; then
+              echo "Error: ./build/${target} directory not found - build may have failed"
+              exit 1
             fi
+            zip -r -j "./build/${target}.zip" ./build/${target}/*
+            assets+=("-a" "./build/${target}.zip")
           done
           hub release edit "${assets[@]}" -m "v${{ needs.build_info.outputs.version }}" "v${{ needs.build_info.outputs.version }}" || true
         shell: bash
