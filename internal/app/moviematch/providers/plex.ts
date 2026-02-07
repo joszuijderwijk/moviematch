@@ -210,8 +210,8 @@ export const createProvider = (
               posterUrl,
               linkUrl: `/api/link/${id}/${libraryItem.key}`,
               genres: libraryItem.Genre?.map((_) => _.tag) ?? [],
-              duration: Number(libraryItem.duration),
-              rating: Number(libraryItem.rating),
+              duration: Number(libraryItem.duration) || 0,
+              rating: Number(libraryItem.rating) || 0,
               ratingImage: libraryItem.ratingImage,
               audienceRating: libraryItem.audienceRating
                 ? Number(libraryItem.audienceRating)
