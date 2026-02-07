@@ -1,13 +1,9 @@
 # MovieMatch
 
-**This branch is not yet stable, please see the
-[v1 branch](https://github.com/LukeChannings/moviematch/tree/v1) for the current
-stable codebase**
-
-[![Tests](https://github.com/LukeChannings/moviematch/workflows/Tests/badge.svg?branch=main)](https://github.com/LukeChannings/moviematch/actions/workflows/tests.yaml)
-[![Docker Pulls](https://img.shields.io/docker/pulls/lukechannings/moviematch?label=Docker+Hub)](https://hub.docker.com/repository/docker/lukechannings/moviematch)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/lukechannings/moviematch?label=Latest+release)](https://github.com/LukeChannings/moviematch/releases)
-[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/lukechannings/moviematch?color=%23E74B4C&include_prereleases&label=Latest%20pre-release)](https://github.com/LukeChannings/moviematch/releases)
+[![Tests](https://github.com/joszuijderwijk/moviematch/actions/workflows/tests.yaml/badge.svg)](https://github.com/joszuijderwijk/moviematch/actions/workflows/tests.yaml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/joszuijderwijk/moviematch?label=Docker+Hub)](https://hub.docker.com/repository/docker/joszuijderwijk/moviematch)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/joszuijderwijk/moviematch?label=Latest+release)](https://github.com/joszuijderwijk/moviematch/releases)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/joszuijderwijk/moviematch?color=%23E74B4C&include_prereleases&label=Latest%20pre-release)](https://github.com/joszuijderwijk/moviematch/releases)
 
 <div style="text-align: center">
   <a href="screenshots/Splash.jpeg"><img src="screenshots/Splash.jpeg" alt="Splash Screen" width="25%"></a>
@@ -38,13 +34,13 @@ first.
 **From DockerHub:**
 
 ```bash
-docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 8000:8000 --pull always lukechannings/moviematch:latest
+docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 8000:8000 --pull always joszuijderwijk/moviematch:latest
 ```
 
 **From GitHub Container Registry (GHCR):**
 
 ```bash
-docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 8000:8000 --pull always ghcr.io/lukechannings/moviematch:latest
+docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 8000:8000 --pull always ghcr.io/joszuijderwijk/moviematch:latest
 ```
 
 **With docker-compose:**
@@ -66,14 +62,14 @@ options.
 ### Option 2: Use Pre-built Binaries from GitHub Release
 
 Download binaries from
-[GitHub Releases](https://github.com/LukeChannings/moviematch/releases):
+[GitHub Releases](https://github.com/joszuijderwijk/moviematch/releases):
 
 ```bash
 # Get the latest release
-export VERSION=$(curl -s https://api.github.com/repos/LukeChannings/moviematch/releases/latest | grep tag_name | cut -d'"' -f4)
+export VERSION=$(curl -s https://api.github.com/repos/joszuijderwijk/moviematch/releases/latest | grep tag_name | cut -d'"' -f4)
 
 # Download binary for your architecture
-wget https://github.com/LukeChannings/moviematch/releases/download/${VERSION}/linux-amd64.zip
+wget https://github.com/joszuijderwijk/moviematch/releases/download/${VERSION}/linux-amd64.zip
 unzip linux-amd64.zip
 
 # Run it
@@ -91,7 +87,7 @@ For development or custom modifications:
 # Install from: https://deno.land, https://nodejs.org, https://just.systems
 
 # Clone and build
-git clone https://github.com/LukeChannings/moviematch.git
+git clone https://github.com/joszuijderwijk/moviematch.git
 cd moviematch
 
 # Set your Plex credentials
@@ -113,7 +109,7 @@ start moviematch with docker-compose.
 The easiest deployment method for servers:
 
 ```bash
-git clone https://github.com/LukeChannings/moviematch.git
+git clone https://github.com/joszuijderwijk/moviematch.git
 cd moviematch
 
 # Configure with your Plex server
@@ -129,13 +125,21 @@ docker-compose -f docker-compose.prod.yml logs -f
 
 ### Image Sources
 
-- **DockerHub**: `lukechannings/moviematch:latest` (mirror)
-- **GHCR**: `ghcr.io/lukechannings/moviematch:latest` (primary)
+- **DockerHub**: `joszuijderwijk/moviematch:latest`
+- **GHCR**: `ghcr.io/joszuijderwijk/moviematch:latest`
 - **Binaries**: Available on
-  [GitHub Releases](https://github.com/LukeChannings/moviematch/releases)
+  [GitHub Releases](https://github.com/joszuijderwijk/moviematch/releases)
 
 All releases are built automatically via GitHub Actions when a version tag is
 created.
+
+## Extra Features in This Fork
+
+- Trailer button in the card info panel (opens a YouTube trailer search)
+- External ratings from Plex metadata (IMDb/Rotten Tomatoes where available)
+- Expanded card details (descriptions + improved metadata display)
+- Updated translations and UI copy
+- Docker images published to both DockerHub and GHCR
 
 ## Creating a Release
 
@@ -155,15 +159,11 @@ To create and publish a new release:
 The release workflow will automatically:
 
 - Run tests on multiple platforms (Linux, macOS, Windows)
-- Build binaries for Linux (amd64, arm64)
+- Build binaries for Linux (amd64)
 - Create a GitHub Release with binaries
 - Push Docker images to GHCR and DockerHub
 
 ## Configuration
-
-⚠️ If you're using MovieMatch v1 please refer to
-[**these options**](https://github.com/LukeChannings/moviematch/tree/v1#configuration).
-⚠️
 
 The following variables are supported via a `.env` file or environment
 variables.
@@ -182,51 +182,3 @@ variables.
 | LIBRARY_TYPE_FILTER  | Only libraries of these types will be used                                                                                                                            | No       | `movie`, (can be `movie`, `artist`, `photo`, or `show`). Multiple options must be comma-separated, e.g. `movie,show` |
 | LINK_TYPE            | The method to use for opening match links                                                                                                                             | No       | `app` (`app` or `http`)                                                                                              |
 | LOG_LEVEL            | How much the server should log                                                                                                                                        | No       | `INFO` (supported options are `DEBUG`, `INFO`, `WARNING`, `ERROR`, and `CRITICAL`)                                   |
-
-## FAQ
-
-### Can a user get my Plex Token?
-
-No. The client never talks directly to the Plex server and any requests that
-need the token (e.g. querying movies, getting poster art) are made by the
-server.
-
-Only a subset of the Plex response is given to the client to minimise the chance
-of sensitive information leaking out. All server logs have both `PLEX_URL` and
-`PLEX_TOKEN` replaced with `****` to prevent accidental disclosure.
-
-### Can it do TV shows too?
-
-Yes, you can include a TV library in your `LIBRARY_TITLE_FILTER` list.
-
-### Do you gather any data?
-
-No. The server is entirely local to you and will work offline.
-
-### Do you support languages other than English?
-
-Yes. The server will use your browser's preferred language by default if it's
-supported. Otherwise it'll fall back to English.
-
-The translations can be found in [configs/localization](./configs/localization).
-
-The file names follow [BCP47](https://tools.ietf.org/html/bcp47) naming. Feel
-free to submit a Pull Request if you'd like your language to be supported.
-
-### Can I run MovieMatch behind a reverse proxy?
-
-Yes, you can read some documentation [here](./docs/reverse-proxy.markdown)
-
-### MovieMatch crashes on startup with an error!
-
-#### dns error: failed to lookup address information: Name or service not known
-
-This is an issue with your DNS configuration, try using an IP address for Plex
-instead of a domain name as a workaround. See
-[#70](https://github.com/LukeChannings/moviematch/issues/70) for more details.
-
-#### tcp connect error: Connection refused
-
-MovieMatch can't connect to Plex due to your network configuration, see
-[#51](https://github.com/LukeChannings/moviematch/issues/51) for ideas on how to
-debug.
