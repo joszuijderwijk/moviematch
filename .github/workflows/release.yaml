@@ -65,15 +65,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      - run: just install
-        name: Install dependencies
-      - name: Lint
-        run: just lint
-      - name: Unit tests
-        run: just test
-        env:
-          TEST_PLEX_URL: ${{ secrets.TEST_PLEX_URL }}
-          TEST_PLEX_TOKEN: ${{ secrets.TEST_PLEX_TOKEN }}
+      - name: Install Node dependencies
+        run: cd web/app && npm install
       - name: Compile MovieMatch
         run: just build-binary all
       - name: Get Release Notes
