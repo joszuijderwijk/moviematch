@@ -155,6 +155,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build & Push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -165,5 +171,7 @@ jobs:
           build-args: |
             VERSION=v${{needs.build_info.outputs.version}}
           tags: |
-            joszuijderwijk/moviematch:${{ needs.build_info.outputs.version }}
-            ${{ needs.build_info.outputs.prerelease == 'false' && 'joszuijderwijk/moviematch:latest' || 'joszuijderwijk/moviematch:develop' }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/moviematch:${{ needs.build_info.outputs.version }}
+            ${{ needs.build_info.outputs.prerelease == 'false' && format('{0}/moviematch:latest', secrets.DOCKERHUB_USERNAME) || format('{0}/moviematch:develop', secrets.DOCKERHUB_USERNAME) }}
+            ghcr.io/${{ github.repository }}:${{ needs.build_info.outputs.version }}
+            ${{ needs.build_info.outputs.prerelease == 'false' && format('ghcr.io/{0}:latest', github.repository) || format('ghcr.io/{0}:develop', github.repository) }}
