@@ -17,7 +17,7 @@ on:
         required: true
 
 env:
-  DENO_VERSION: 1.40.0
+  DENO_VERSION: 1.10.1
 
 jobs:
   build_info:
@@ -29,7 +29,7 @@ jobs:
       existing_release: ${{ steps.metadata.outputs.existing_release }}
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
       - name: Get metadata
         id: metadata
         run: |
@@ -38,7 +38,7 @@ jobs:
           echo "::set-output name=version::${VERSION}"
           PRERELEASE="$([[ "$VERSION" == *"alpha"* ]] || [[ "$VERSION" == *"beta"* ]] && echo "true" || echo "false")"
           echo "::set-output name=prerelease::${PRERELEASE}"
-          response=$(curl -s -H "Accept: application/json" https://api.github.com/repos/lukechannings/moviematch/releases)
+          response=$(curl -s -H "Accept: application/json" https://api.github.com/repos/zz/moviematch/releases)
           EXISTING_RELEASE=$( [[ "$(echo $response | jq ".[]|select(.tag_name==\"${VERSION}\")")" == "" ]] && echo "false" || echo "true" )
           echo "::set-output name=existing_release::${EXISTING_RELEASE}"
       - name: Check we're building the right version
@@ -54,9 +54,9 @@ jobs:
     needs: build_info
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
       - name: Setup Deno
-        uses: denoland/setup-deno@v1
+        uses: denolib/setup-deno@v2
         with:
           deno-version: ${{ env.DENO_VERSION }}
       - name: Setup Just
@@ -65,29 +65,80 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      - name: Install Node dependencies
-        run: cd web/app && npm install
+      - run: just install
+        name: Install dependencies
+      - name: Lint
+        run: just lint
+      - name: Unit tests
+        run: just test
+        env:
+          TEST_PLEX_URL: ${{ secrets.TEST_PLEX_URL }}
+          TEST_PLEX_TOKEN: ${{ secrets.TEST_PLEX_TOKEN }}
       - name: Compile MovieMatch
         run: just build-binary all
       - name: Get Release Notes
         run: |
           RELEASE_NOTES=$(deno eval -p "(await Deno.readTextFile('./RELEASE_NOTES.markdown')).match(/##\sv${{needs.build_info.outputs.version}}(?<notes>(.|\n)*?)^##\s/m)?.groups?.notes?.trim() ?? ''")
           echo "${RELEASE_NOTES}" > build/RELEASE_NOTES.markdown
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v2
         with:
           name: build
           path: ./build
+          retention-days: 1
+  e2e-tests:
+    name: E2E Tests (${{matrix.name}})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: linux-amd64
+            os: ubuntu-latest
+            name: Linux
+          - target: macos-amd64
+            os: macos-latest
+            name: macOS
+          - target: windows-amd64
+            os: windows-latest
+            name: Windows
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+      - name: Setup Deno
+        uses: denolib/setup-deno@v2
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+      - name: Setup Just
+        uses: extractions/setup-just@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build
+      - name: Run end-to-end tests
+        run: |
+          just install-deno-dependencies
+          just test-e2e ${{ matrix.target }}
+        env:
+          PLEX_URL: ${{ secrets.TEST_PLEX_URL }}
+          PLEX_TOKEN: ${{ secrets.TEST_PLEX_TOKEN }}
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: screenshots-${{ matrix.os }}
+          path: ./screenshots
           retention-days: 1
   release_github:
     name: Release (GitHub)
     runs-on: ubuntu-latest
     needs:
-      - build
+      - e2e-tests
       - build_info
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+        uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
         with:
           name: build
           path: build
@@ -126,26 +177,26 @@ jobs:
     name: Release (Docker)
     runs-on: ubuntu-latest
     needs:
-      - build
+      - e2e-tests
       - build_info
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+        uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
         with:
           name: build
           path: build
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v1
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v1
       - name: Login to DockerHub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build & Push Docker image (DockerHub)
-        uses: docker/build-push-action@v5
+      - name: Build & Push Docker image
+        uses: docker/build-push-action@v2
         with:
           context: .
           file: ./configs/Dockerfile
@@ -154,25 +205,5 @@ jobs:
           build-args: |
             VERSION=v${{needs.build_info.outputs.version}}
           tags: |
-            lukechannings/moviematch:${{ needs.build_info.outputs.version }}
-            ${{ needs.build_info.outputs.prerelease == 'false' && 'lukechannings/moviematch:latest' || 'lukechannings/moviematch:develop' }}
-
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build & Push Docker image (GHCR)
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./configs/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          build-args: |
-            VERSION=v${{needs.build_info.outputs.version}}
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/moviematch:${{ needs.build_info.outputs.version }}
-            ${{ needs.build_info.outputs.prerelease == 'false' && format('ghcr.io/{0}/moviematch:latest', github.repository_owner) || format('ghcr.io/{0}/moviematch:develop', github.repository_owner) }}
+            joszuijderwijk/moviematch:${{ needs.build_info.outputs.version }}
+            ${{ needs.build_info.outputs.prerelease == 'false' && 'joszuijderwijk/moviematch:latest' || 'joszuijderwijk/moviematch:develop' }}

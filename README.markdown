@@ -25,38 +25,123 @@ If two (or more) people swipe right on the same movie, it'll show up in everyone
 
 ## Getting started
 
-### Using Pre-built Docker Image
+### Option 1: Using Docker (Easiest)
 
-`docker run -it -e PLEX_URL=<Plex URL> -e PLEX_TOKEN=<Your Token> -p 8000:8000 --pull always lukechannings/moviematch:latest`
+**From DockerHub:**
+```bash
+docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 8000:8000 --pull always lukechannings/moviematch:latest
+```
 
-**Note**: There is also documentation for **docker-compose** over [here](./docs/docker-compose.markdown) 👈
+**From GitHub Container Registry (GHCR):**
+```bash
+docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 8000:8000 --pull always ghcr.io/lukechannings/moviematch:latest
+```
 
-### Building and Running from Source
+**With docker-compose:**
+```bash
+# Create .env file
+cat > .env << EOF
+PLEX_URL=https://plex.example.com
+PLEX_TOKEN=your-plex-token
+EOF
 
-For Ubuntu/Linux, use the provided build script to automatically compile and run moviematch:
+# Run with docker-compose
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+See [docker-compose documentation](./docs/docker-compose.markdown) for more options.
+
+### Option 2: Use Pre-built Binaries from GitHub Release
+
+Download binaries from [GitHub Releases](https://github.com/LukeChannings/moviematch/releases):
 
 ```bash
+# Get the latest release
+export VERSION=$(curl -s https://api.github.com/repos/LukeChannings/moviematch/releases/latest | grep tag_name | cut -d'"' -f4)
+
+# Download binary for your architecture
+wget https://github.com/LukeChannings/moviematch/releases/download/${VERSION}/linux-amd64.zip
+unzip linux-amd64.zip
+
+# Run it
+export PLEX_URL="https://plex.example.com"
+export PLEX_TOKEN="your-token"
+./moviematch
+```
+
+### Option 3: Build from Source
+
+For development or custom modifications:
+
+```bash
+# Prerequisites: Deno, Node.js, Just
+# Install from: https://deno.land, https://nodejs.org, https://just.systems
+
+# Clone and build
+git clone https://github.com/LukeChannings/moviematch.git
+cd moviematch
+
 # Set your Plex credentials
 export PLEX_URL="https://your-plex-server.com"
 export PLEX_TOKEN="your-plex-token"
 
-# Run the build script (optionally specify target: linux-amd64, linux-arm64, etc.)
+# Run the build script
 chmod +x build.sh
-./build.sh [target]
+./build.sh linux-amd64 /path/to/docker/folder
 ```
 
-The script will:
-1. Verify all prerequisites (Deno, Node.js, Just)
-2. Build the UI and compile the binary
-3. Create a Docker image
-4. Generate a docker-compose.yml file
-5. Start moviematch via docker-compose
+The script will build the UI, compile the binary, create a Docker image, and start moviematch with docker-compose.
 
-Access MovieMatch at `http://localhost:8000`
+## Deployment
+
+### Docker Compose (Recommended)
+
+The easiest deployment method for servers:
+
+```bash
+git clone https://github.com/LukeChannings/moviematch.git
+cd moviematch
+
+# Configure with your Plex server
+cp .env.example .env
+nano .env  # Edit PLEX_URL and PLEX_TOKEN
+
+# Deploy
+docker-compose -f docker-compose.prod.yml up -d
+
+# View logs
+docker-compose -f docker-compose.prod.yml logs -f
+```
+
+### Image Sources
+
+- **DockerHub**: `lukechannings/moviematch:latest` (mirror)
+- **GHCR**: `ghcr.io/lukechannings/moviematch:latest` (primary)
+- **Binaries**: Available on [GitHub Releases](https://github.com/LukeChannings/moviematch/releases)
+
+All releases are built automatically via GitHub Actions when a version tag is created.
+
+## Creating a Release
+
+To create and publish a new release:
+
+1. **Update the version** in the [VERSION](./VERSION) file
+2. **Update release notes** in [RELEASE_NOTES.markdown](./RELEASE_NOTES.markdown)
+3. **Commit and tag:**
+   ```bash
+   git add VERSION RELEASE_NOTES.markdown
+   git commit -m "release: version 2.0.0"
+   git tag v2.0.0
+   git push origin main v2.0.0
+   ```
+
+The release workflow will automatically:
+- Run tests on multiple platforms (Linux, macOS, Windows)
+- Build binaries for Linux (amd64, arm64)
+- Create a GitHub Release with binaries
+- Push Docker images to GHCR and DockerHub
 
 ## Configuration
-
-⚠️ If you're using MovieMatch v1 please refer to [**these options**](https://github.com/LukeChannings/moviematch/tree/v1#configuration). ⚠️
 
 ⚠️ If you're using MovieMatch v1 please refer to [**these options**](https://github.com/LukeChannings/moviematch/tree/v1#configuration). ⚠️
 
