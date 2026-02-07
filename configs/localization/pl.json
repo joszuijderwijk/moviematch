@@ -17,5 +17,6 @@
   "SHARE_ROOM_TITLE": "Wybierzmy film do obejrzenia!",
   "FIELD_REQUIRED_ERROR": "To pole jest wymagane",
   "COPY_LINK_SUCCESS": "Link skopiowany do schowka",
-  "COPY_LINK_FAILURE": "Nie można skopiować linku do schowka"
+  "COPY_LINK_FAILURE": "Nie można skopiować linku do schowka",
+  "TRAILER": "Zwiastun"
 }

@@ -15,5 +15,15 @@ export const Layout = (
   <section className={`${styles.screenLayout} ${className ?? ""}`}>
     {!hideLogo && <Logo />}
     {children}
+    <footer className={styles.footer}>
+      <a
+        className={styles.footerLink}
+        href="https://github.com/joszuijderwijk/moviematch"
+        target="_blank"
+        rel="noreferrer"
+      >
+        GitHub
+      </a>
+    </footer>
   </section>
 );

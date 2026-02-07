@@ -1,16 +1,22 @@
 {
   "LANG": "nl",
   "LOGIN_NAME": "Naam",
-  "LOGIN_ROOM_CODE": "Kamercode",
-  "LOGIN_SIGN_IN": "Voorleggen",
+  "LOGIN_ROOM_NAME": "Kamernaam",
+  "LOGIN_SIGN_IN": "Inloggen",
   "LOGIN_SIGN_IN_PLEX": "Inloggen met Plex",
-  "CREATE_ROOM": "Creëer een kamer",
+  "CREATE_ROOM": "Kamer aanmaken",
+  "JOIN_ROOM": "Deelnemen",
+  "LOGOUT": "Uitloggen",
   "RATE_SECTION_LOADING": "Films laden...",
   "RATE_SECTION_EXHAUSTED_CARDS": "Geen films meer over!",
   "MATCHES_SECTION_TITLE": "Matches",
   "MATCHES_SECTION_NO_MATCHES": "Nog geen matches. Tip: verlaag je standaard.",
   "MATCHES_SECTION_CARD_LIKERS": "${users} willen ${movie} kijken",
   "LIST_CONJUNCTION": "en",
-  "BACK": "Back",
-  "SHARE_ROOM_TITLE": "Welke film gaan we kijken?"
+  "BACK": "Terug",
+  "SHARE_ROOM_TITLE": "Welke film gaan we kijken?",
+  "FIELD_REQUIRED_ERROR": "Dit veld is verplicht",
+  "COPY_LINK_SUCCESS": "Link gekopieerd naar klembord",
+  "COPY_LINK_FAILURE": "Link kon niet naar klembord gekopieerd worden",
+  "TRAILER": "Trailer"
 }

@@ -9,8 +9,7 @@ import { useStore } from "../../store";
 import { ErrorMessage } from "../atoms/ErrorMessage";
 
 export const LoginScreen = () => {
-  const [{ config, translations, error }, dispatch] = useStore([
-    "config",
+  const [{ translations, error }, dispatch] = useStore([
     "translations",
     "error",
   ]);
@@ -28,43 +27,28 @@ export const LoginScreen = () => {
         }}
       >
         {error && <ErrorMessage message={error.message ?? error.type ?? ""} />}
-        {!config?.requirePlexLogin && (
-          <Field
-            label={<Tr name="LOGIN_NAME" />}
-            name="given-name"
-            autoComplete="given-name"
-            value={userName ?? ""}
-            onChange={(e) => setUserName(e.target.value)}
-            errorMessage={userNameError}
-          />
-        )}
+        <Field
+          label={<Tr name="LOGIN_NAME" />}
+          name="given-name"
+          autoComplete="given-name"
+          value={userName ?? ""}
+          onChange={(e) => setUserName(e.target.value)}
+          errorMessage={userNameError}
+        />
 
         <ButtonContainer paddingTop="s7">
-          {!config?.requirePlexLogin && (
-            <Button
-              appearance="Primary"
-              onPress={async () => {
-                if (!userName) {
-                  setUserNameError(translations?.FIELD_REQUIRED_ERROR!);
-                  return;
-                }
-                dispatch({ type: "login", payload: { userName } });
-              }}
-              testHandle="login-anonymous"
-            >
-              <Tr name="LOGIN_SIGN_IN" />
-            </Button>
-          )}
           <Button
             appearance="Primary"
-            color="plex-color"
-            highlightColor="plex-highlight-color"
-            testHandle="login-plex"
-            onPress={() => {
-              dispatch({ type: "plexLogin" });
+            onPress={async () => {
+              if (!userName) {
+                setUserNameError(translations?.FIELD_REQUIRED_ERROR!);
+                return;
+              }
+              dispatch({ type: "login", payload: { userName } });
             }}
+            testHandle="login-anonymous"
           >
-            <Tr name="LOGIN_SIGN_IN_PLEX" />
+            <Tr name="LOGIN_SIGN_IN" />
           </Button>
         </ButtonContainer>
       </form>

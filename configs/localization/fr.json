@@ -17,5 +17,6 @@
   "SHARE_ROOM_TITLE": "Choisissons un film à regarder !",
   "FIELD_REQUIRED_ERROR": "Ce champ est requis",
   "COPY_LINK_SUCCESS": "Lien copié vers le presse-papiers",
-  "COPY_LINK_FAILURE": "Impossible de copier le lien dans le presse-papiers"
+  "COPY_LINK_FAILURE": "Impossible de copier le lien dans le presse-papiers",
+  "TRAILER": "Bande-annonce"
 }

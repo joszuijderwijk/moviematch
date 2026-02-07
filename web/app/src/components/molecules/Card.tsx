@@ -5,6 +5,7 @@ import { InfoIcon } from "../icons/InfoIcon";
 import { ContentRatingSymbol } from "../icons/ContentRatingSymbol";
 import { StarIcon } from "../icons/StarIcon";
 import { Pill } from "../atoms/Pill";
+import { Tr } from "../atoms/Tr";
 
 import styles from "./Card.module.css";
 import { ShareIcon } from "../icons/ShareIcon";
@@ -38,6 +39,9 @@ export const Card = forwardRef<HTMLDivElement & HTMLAnchorElement, CardProps>(
     }`;
 
     const Tag = href ? "a" : "div";
+    const trailerQuery = `${media.title}${media.year ? ` ${media.year}` : ""} trailer`;
+    const trailerUrl =
+      `https://www.youtube.com/results?search_query=${encodeURIComponent(trailerQuery)}`;
 
     return (
       <Tag
@@ -77,6 +81,9 @@ export const Card = forwardRef<HTMLDivElement & HTMLAnchorElement, CardProps>(
                   </Pill>
                 )}
                 {media.genres.map((genre) => <Pill key={genre}>{genre}</Pill>)}
+                <Pill href={trailerUrl}>
+                  <Tr name="TRAILER" />
+                </Pill>
                 {!href && (
                   <Pill href={media.linkUrl}>
                     <span>Open in Plex</span>

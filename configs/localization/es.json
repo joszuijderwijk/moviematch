@@ -17,5 +17,6 @@
   "SHARE_ROOM_TITLE": "¡Elijamos una película que ver!",
   "FIELD_REQUIRED_ERROR": "Campo requerido",
   "COPY_LINK_SUCCESS": "Enlace copiado al portapapeles",
-  "COPY_LINK_FAILURE": "No se pudo copiar el enlace al portapapeles"
+  "COPY_LINK_FAILURE": "No se pudo copiar el enlace al portapapeles",
+  "TRAILER": "Trailer"
 }

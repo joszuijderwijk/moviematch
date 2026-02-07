@@ -92,6 +92,7 @@ export type TranslationKey =
   | "FIELD_REQUIRED_ERROR"
   | "COPY_LINK_SUCCESS"
   | "COPY_LINK_FAILURE"
+  | "TRAILER"
   | "LOGOUT";
 
 // Configure message
