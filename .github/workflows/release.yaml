@@ -112,7 +112,7 @@ jobs:
       - name: Upload binaries
         run: |
           set -x
-          targets=("linux-amd64" "linux-arm64" "macos-amd64" "macos-arm64" "windows-amd64")
+          targets=("linux-amd64" "macos-amd64" "macos-arm64" "windows-amd64")
           assets=("-a" "./build/moviematch.js")
           for target in ${targets[*]}; do
             if [ ! -d "./build/${target}" ]; then

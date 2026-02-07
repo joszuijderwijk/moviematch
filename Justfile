@@ -50,8 +50,9 @@ build-binary target=default_target: build-bundle
   case "{{target}}" in
     all | linux-amd64 | linux-x86_64)
       just compile x86_64-unknown-linux-gnu linux-amd64;;&
-    all | linux-arm64 | linux-aarch64)
-      just compile aarch64-unknown-linux-gnu linux-arm64;;&
+    # linux-arm64 not supported by Deno 1.40.0 cross-compilation
+    # all | linux-arm64 | linux-aarch64)
+    #   just compile aarch64-unknown-linux-gnu linux-arm64;;&
     all | macos-amd64 | macos-x86_64)
       just compile x86_64-apple-darwin macos-amd64;;&
     all | macos-arm64 | macos-aarch64)
