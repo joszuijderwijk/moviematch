@@ -21,6 +21,40 @@ export interface CardProps {
 const formatTime = (milliseconds: number) =>
   `${Math.round(milliseconds / 1000 / 60)} minutes`;
 
+const formatRatingValue = (value?: number) => {
+  if (value === undefined || Number.isNaN(value)) {
+    return null;
+  }
+
+  const formatted = value.toFixed(1);
+  return formatted.endsWith(".0") ? formatted.slice(0, -2) : formatted;
+};
+
+const getRatingSourceLabel = (ratingImage?: string, isAudience = false) => {
+  if (!ratingImage) {
+    return isAudience ? "Audience" : "Rating";
+  }
+
+  const normalized = ratingImage.toLowerCase();
+  if (normalized.includes("imdb")) {
+    return "IMDb";
+  }
+  if (normalized.includes("rottentomatoes")) {
+    return isAudience ? "RT Audience" : "Rotten Tomatoes";
+  }
+  if (normalized.includes("themoviedb")) {
+    return "TMDb";
+  }
+  if (normalized.includes("metacritic")) {
+    return "Metacritic";
+  }
+  if (normalized.includes("trakt")) {
+    return "Trakt";
+  }
+
+  return isAudience ? "Audience" : "Rating";
+};
+
 export const Card = forwardRef<HTMLDivElement & HTMLAnchorElement, CardProps>(
   ({ media, title, href }, ref) => {
     const [showMoreInfo, setShowMoreInfo] = useState<boolean>(false);
@@ -39,9 +73,19 @@ export const Card = forwardRef<HTMLDivElement & HTMLAnchorElement, CardProps>(
     }`;
 
     const Tag = href ? "a" : "div";
-    const trailerQuery = `${media.title}${media.year ? ` ${media.year}` : ""} trailer`;
-    const trailerUrl =
-      `https://www.youtube.com/results?search_query=${encodeURIComponent(trailerQuery)}`;
+    const externalRatingLabel = getRatingSourceLabel(media.ratingImage);
+    const externalRatingValue = formatRatingValue(media.rating);
+    const audienceRatingLabel = getRatingSourceLabel(
+      media.audienceRatingImage,
+      true,
+    );
+    const audienceRatingValue = formatRatingValue(media.audienceRating);
+    const trailerQuery = `${media.title}${
+      media.year ? ` ${media.year}` : ""
+    } trailer`;
+    const trailerUrl = `https://www.youtube.com/results?search_query=${
+      encodeURIComponent(trailerQuery)
+    }`;
 
     return (
       <Tag
@@ -72,6 +116,16 @@ export const Card = forwardRef<HTMLDivElement & HTMLAnchorElement, CardProps>(
                 <Pill>
                   <StarIcon height="0.8rem" width="0.5rem" /> {media.rating}
                 </Pill>
+                {media.ratingImage && externalRatingValue !== null && (
+                  <Pill>
+                    {externalRatingLabel} {externalRatingValue}
+                  </Pill>
+                )}
+                {media.audienceRatingImage && audienceRatingValue !== null && (
+                  <Pill>
+                    {audienceRatingLabel} {audienceRatingValue}
+                  </Pill>
+                )}
                 {media.contentRating && (
                   <Pill>
                     <ContentRatingSymbol

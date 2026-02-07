@@ -213,6 +213,9 @@ export interface Media {
   genres: string[];
   duration: number;
   rating: number;
+  ratingImage?: string;
+  audienceRating?: number;
+  audienceRatingImage?: string;
   contentRating?: string;
 }
 

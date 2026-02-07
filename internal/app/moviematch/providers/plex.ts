@@ -212,6 +212,11 @@ export const createProvider = (
               genres: libraryItem.Genre?.map((_) => _.tag) ?? [],
               duration: Number(libraryItem.duration),
               rating: Number(libraryItem.rating),
+              ratingImage: libraryItem.ratingImage,
+              audienceRating: libraryItem.audienceRating
+                ? Number(libraryItem.audienceRating)
+                : undefined,
+              audienceRatingImage: libraryItem.audienceRatingImage,
               contentRating: libraryItem.contentRating,
             });
           }
