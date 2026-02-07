@@ -1,9 +1,7 @@
 # MovieMatch
 
-[![Tests](https://github.com/joszuijderwijk/moviematch/actions/workflows/tests.yaml/badge.svg)](https://github.com/joszuijderwijk/moviematch/actions/workflows/tests.yaml)
-[![Docker Pulls](https://img.shields.io/docker/pulls/joszuijderwijk/moviematch?label=Docker+Hub)](https://hub.docker.com/repository/docker/joszuijderwijk/moviematch)
+[![Docker Pulls](https://img.shields.io/docker/pulls/iovidius/moviematch?label=Docker+Hub)](https://hub.docker.com/repository/docker/iovidius/moviematch)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/joszuijderwijk/moviematch?label=Latest+release)](https://github.com/joszuijderwijk/moviematch/releases)
-[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/joszuijderwijk/moviematch?color=%23E74B4C&include_prereleases&label=Latest%20pre-release)](https://github.com/joszuijderwijk/moviematch/releases)
 
 <div style="text-align: center">
   <a href="screenshots/Splash.jpeg"><img src="screenshots/Splash.jpeg" alt="Splash Screen" width="25%"></a>
