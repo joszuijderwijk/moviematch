@@ -10,7 +10,7 @@ name: Tests (Disabled)
 #   workflow_dispatch:
 
 on:
-  workflow_dispatch:  # Only manual trigger
+  workflow_dispatch: # Only manual trigger
 
 env:
   DENO_VERSION: 1.40.0

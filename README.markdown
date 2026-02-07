@@ -1,6 +1,8 @@
 # MovieMatch
 
-**This branch is not yet stable, please see the [v1 branch](https://github.com/LukeChannings/moviematch/tree/v1) for the current stable codebase**
+**This branch is not yet stable, please see the
+[v1 branch](https://github.com/LukeChannings/moviematch/tree/v1) for the current
+stable codebase**
 
 [![Tests](https://github.com/LukeChannings/moviematch/workflows/Tests/badge.svg?branch=main)](https://github.com/LukeChannings/moviematch/actions/workflows/tests.yaml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lukechannings/moviematch?label=Docker+Hub)](https://hub.docker.com/repository/docker/lukechannings/moviematch)
@@ -13,31 +15,40 @@
   <a href="screenshots/Rate.jpeg"><img src="screenshots/Rate.jpeg" alt="Splash Screen" width="25%"></a>
 </div>
 
-Have you ever spent longer deciding on a movie than it'd take to just watch a random movie? This is an app that helps you and your friends pick a movie to watch from a [Plex](https://www.plex.tv) server.
+Have you ever spent longer deciding on a movie than it'd take to just watch a
+random movie? This is an app that helps you and your friends pick a movie to
+watch from a [Plex](https://www.plex.tv) server.
 
 ## How it works
 
-MovieMatch connects to your Plex server and gets a list of movies (from any libraries marked as a movie library).
+MovieMatch connects to your Plex server and gets a list of movies (from any
+libraries marked as a movie library).
 
-As many people as you want connect to your MovieMatch server and get a list of shuffled movies. Swipe right to 👍, swipe left to 👎.
+As many people as you want connect to your MovieMatch server and get a list of
+shuffled movies. Swipe right to 👍, swipe left to 👎.
 
-If two (or more) people swipe right on the same movie, it'll show up in everyone's matches. The movies that the most people swiped right on will show up first.
+If two (or more) people swipe right on the same movie, it'll show up in
+everyone's matches. The movies that the most people swiped right on will show up
+first.
 
 ## Getting started
 
 ### Option 1: Using Docker (Easiest)
 
 **From DockerHub:**
+
 ```bash
 docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 8000:8000 --pull always lukechannings/moviematch:latest
 ```
 
 **From GitHub Container Registry (GHCR):**
+
 ```bash
 docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 8000:8000 --pull always ghcr.io/lukechannings/moviematch:latest
 ```
 
 **With docker-compose:**
+
 ```bash
 # Create .env file
 cat > .env << EOF
@@ -49,11 +60,13 @@ EOF
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-See [docker-compose documentation](./docs/docker-compose.markdown) for more options.
+See [docker-compose documentation](./docs/docker-compose.markdown) for more
+options.
 
 ### Option 2: Use Pre-built Binaries from GitHub Release
 
-Download binaries from [GitHub Releases](https://github.com/LukeChannings/moviematch/releases):
+Download binaries from
+[GitHub Releases](https://github.com/LukeChannings/moviematch/releases):
 
 ```bash
 # Get the latest release
@@ -90,7 +103,8 @@ chmod +x build.sh
 ./build.sh linux-amd64 /path/to/docker/folder
 ```
 
-The script will build the UI, compile the binary, create a Docker image, and start moviematch with docker-compose.
+The script will build the UI, compile the binary, create a Docker image, and
+start moviematch with docker-compose.
 
 ## Deployment
 
@@ -117,16 +131,19 @@ docker-compose -f docker-compose.prod.yml logs -f
 
 - **DockerHub**: `lukechannings/moviematch:latest` (mirror)
 - **GHCR**: `ghcr.io/lukechannings/moviematch:latest` (primary)
-- **Binaries**: Available on [GitHub Releases](https://github.com/LukeChannings/moviematch/releases)
+- **Binaries**: Available on
+  [GitHub Releases](https://github.com/LukeChannings/moviematch/releases)
 
-All releases are built automatically via GitHub Actions when a version tag is created.
+All releases are built automatically via GitHub Actions when a version tag is
+created.
 
 ## Creating a Release
 
 To create and publish a new release:
 
 1. **Update the version** in the [VERSION](./VERSION) file
-2. **Update release notes** in [RELEASE_NOTES.markdown](./RELEASE_NOTES.markdown)
+2. **Update release notes** in
+   [RELEASE_NOTES.markdown](./RELEASE_NOTES.markdown)
 3. **Commit and tag:**
    ```bash
    git add VERSION RELEASE_NOTES.markdown
@@ -136,6 +153,7 @@ To create and publish a new release:
    ```
 
 The release workflow will automatically:
+
 - Run tests on multiple platforms (Linux, macOS, Windows)
 - Build binaries for Linux (amd64, arm64)
 - Create a GitHub Release with binaries
@@ -143,9 +161,12 @@ The release workflow will automatically:
 
 ## Configuration
 
-⚠️ If you're using MovieMatch v1 please refer to [**these options**](https://github.com/LukeChannings/moviematch/tree/v1#configuration). ⚠️
+⚠️ If you're using MovieMatch v1 please refer to
+[**these options**](https://github.com/LukeChannings/moviematch/tree/v1#configuration).
+⚠️
 
-The following variables are supported via a `.env` file or environment variables.
+The following variables are supported via a `.env` file or environment
+variables.
 
 | Name                 | Description                                                                                                                                                           | Required | Default                                                                                                              |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -166,10 +187,13 @@ The following variables are supported via a `.env` file or environment variables
 
 ### Can a user get my Plex Token?
 
-No. The client never talks directly to the Plex server and any requests that need the token (e.g. querying movies, getting poster art) are made by the server.
+No. The client never talks directly to the Plex server and any requests that
+need the token (e.g. querying movies, getting poster art) are made by the
+server.
 
-Only a subset of the Plex response is given to the client to minimise the chance of sensitive information leaking out.
-All server logs have both `PLEX_URL` and `PLEX_TOKEN` replaced with `****` to prevent accidental disclosure.
+Only a subset of the Plex response is given to the client to minimise the chance
+of sensitive information leaking out. All server logs have both `PLEX_URL` and
+`PLEX_TOKEN` replaced with `****` to prevent accidental disclosure.
 
 ### Can it do TV shows too?
 
@@ -181,11 +205,13 @@ No. The server is entirely local to you and will work offline.
 
 ### Do you support languages other than English?
 
-Yes. The server will use your browser's preferred language by default if it's supported. Otherwise it'll fall back to English.
+Yes. The server will use your browser's preferred language by default if it's
+supported. Otherwise it'll fall back to English.
 
 The translations can be found in [configs/localization](./configs/localization).
 
-The file names follow [BCP47](https://tools.ietf.org/html/bcp47) naming. Feel free to submit a Pull Request if you'd like your language to be supported.
+The file names follow [BCP47](https://tools.ietf.org/html/bcp47) naming. Feel
+free to submit a Pull Request if you'd like your language to be supported.
 
 ### Can I run MovieMatch behind a reverse proxy?
 
@@ -195,8 +221,12 @@ Yes, you can read some documentation [here](./docs/reverse-proxy.markdown)
 
 #### dns error: failed to lookup address information: Name or service not known
 
-This is an issue with your DNS configuration, try using an IP address for Plex instead of a domain name as a workaround. See [#70](https://github.com/LukeChannings/moviematch/issues/70) for more details.
+This is an issue with your DNS configuration, try using an IP address for Plex
+instead of a domain name as a workaround. See
+[#70](https://github.com/LukeChannings/moviematch/issues/70) for more details.
 
 #### tcp connect error: Connection refused
 
-MovieMatch can't connect to Plex due to your network configuration, see [#51](https://github.com/LukeChannings/moviematch/issues/51) for ideas on how to debug.
+MovieMatch can't connect to Plex due to your network configuration, see
+[#51](https://github.com/LukeChannings/moviematch/issues/51) for ideas on how to
+debug.

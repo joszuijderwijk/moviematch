@@ -75,7 +75,7 @@ export class Room {
     media.sort(() => 0.5 - Math.random());
 
     return new Map<string, Media>(
-      media.map((media) => ([media.id, media])),
+      media.map((media) => [media.id, media]),
     );
   });
 
