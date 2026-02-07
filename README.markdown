@@ -123,13 +123,10 @@ docker-compose -f docker-compose.prod.yml logs -f
 
 ### Image Sources
 
-- **DockerHub**: `joszuijderwijk/moviematch:latest`
+- **DockerHub**: `iovidius/moviematch:latest`
 - **GHCR**: `ghcr.io/joszuijderwijk/moviematch:latest`
 - **Binaries**: Available on
   [GitHub Releases](https://github.com/joszuijderwijk/moviematch/releases)
-
-All releases are built automatically via GitHub Actions when a version tag is
-created.
 
 ## Extra Features in This Fork
 
@@ -138,28 +135,6 @@ created.
 - Expanded card details (descriptions + improved metadata display)
 - Updated translations and UI copy
 - Docker images published to both DockerHub and GHCR
-
-## Creating a Release
-
-To create and publish a new release:
-
-1. **Update the version** in the [VERSION](./VERSION) file
-2. **Update release notes** in
-   [RELEASE_NOTES.markdown](./RELEASE_NOTES.markdown)
-3. **Commit and tag:**
-   ```bash
-   git add VERSION RELEASE_NOTES.markdown
-   git commit -m "release: version 2.0.0"
-   git tag v2.0.0
-   git push origin main v2.0.0
-   ```
-
-The release workflow will automatically:
-
-- Run tests on multiple platforms (Linux, macOS, Windows)
-- Build binaries for Linux (amd64)
-- Create a GitHub Release with binaries
-- Push Docker images to GHCR and DockerHub
 
 ## Configuration
 
