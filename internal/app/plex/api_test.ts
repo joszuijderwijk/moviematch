@@ -6,16 +6,7 @@ const { array, boolean, mixed, number, object, string } = yup;
 const TEST_PLEX_URL = Deno.env.get("TEST_PLEX_URL");
 const TEST_PLEX_TOKEN = Deno.env.get("TEST_PLEX_TOKEN");
 
-try {
-  assert(
-    typeof TEST_PLEX_URL !== "undefined",
-    "TEST_PLEX_URL is required for testing Plex API integration",
-  );
-  assert(
-    typeof TEST_PLEX_TOKEN !== "undefined",
-    "TEST_PLEX_TOKEN is required for testing Plex API integration",
-  );
-
+if (TEST_PLEX_URL && TEST_PLEX_TOKEN) {
   const plexApi = new PlexApi(
     TEST_PLEX_URL,
     TEST_PLEX_TOKEN,
@@ -281,6 +272,8 @@ try {
 
     await filterValueSchema.validate(filterValues);
   });
-} catch (err) {
-  console.log(err);
+} else {
+  console.warn(
+    "Skipping Plex API tests: TEST_PLEX_URL and TEST_PLEX_TOKEN environment variables are not set",
+  );
 }

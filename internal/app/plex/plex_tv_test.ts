@@ -6,12 +6,7 @@ const { array, boolean, number, object, string } = yup;
 const TEST_PLEX_TOKEN = Deno.env.get("TEST_PLEX_TOKEN");
 const clientId = "odFpLIdHbUMBOL4iwYRGsPc2mJkoOY";
 
-try {
-  assert(
-    typeof TEST_PLEX_TOKEN !== "undefined",
-    "TEST_PLEX_TOKEN is required for testing Plex TV API integration",
-  );
-
+if (TEST_PLEX_TOKEN) {
   Deno.test("Plex TV -> getPlexUsers", async () => {
     const users = await getPlexUsers({
       clientId,
@@ -90,6 +85,8 @@ try {
 
     homeUsersSchema.validate(users.MediaContainer);
   });
-} catch (err) {
-  console.log(err);
+} else {
+  console.warn(
+    "Skipping Plex TV tests: TEST_PLEX_TOKEN environment variable is not set",
+  );
 }
