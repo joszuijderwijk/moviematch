@@ -1,11 +1,16 @@
-name: Tests
+name: Tests (Disabled)
+
+# Disabled to speed up workflow - only release workflow runs now
+# Uncomment below to re-enable:
+# on:
+#   push:
+#     branches: ["**"]
+#   pull_request:
+#     branches: ["**"]
+#   workflow_dispatch:
 
 on:
-  push:
-    branches: ["**"]
-  pull_request:
-    branches: ["**"]
-  workflow_dispatch:
+  workflow_dispatch:  # Only manual trigger
 
 env:
   DENO_VERSION: 1.40.0
