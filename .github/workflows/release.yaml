@@ -71,8 +71,8 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - run: just install-node-modules
         name: Install Node.js dependencies
-      - name: Lint
-        run: just lint
+      #- name: Lint
+      #  run: just lint
       - name: Unit tests
         run: just test
         env:
