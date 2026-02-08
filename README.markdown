@@ -43,83 +43,8 @@ docker run -it -e PLEX_URL=https://plex.example.com -e PLEX_TOKEN=your-token -p 
 
 **With docker-compose:**
 
-```bash
-# Create .env file
-cat > .env << EOF
-PLEX_URL=https://plex.example.com
-PLEX_TOKEN=your-plex-token
-EOF
+See [docker-compose documentation](./docs/docker-compose.markdown)
 
-# Run with docker-compose
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-See [docker-compose documentation](./docs/docker-compose.markdown) for more
-options.
-
-### Option 2: Use Pre-built Binaries from GitHub Release
-
-Download binaries from
-[GitHub Releases](https://github.com/joszuijderwijk/moviematch/releases):
-
-```bash
-# Get the latest release
-export VERSION=$(curl -s https://api.github.com/repos/joszuijderwijk/moviematch/releases/latest | grep tag_name | cut -d'"' -f4)
-
-# Download binary for your architecture
-wget https://github.com/joszuijderwijk/moviematch/releases/download/${VERSION}/linux-amd64.zip
-unzip linux-amd64.zip
-
-# Run it
-export PLEX_URL="https://plex.example.com"
-export PLEX_TOKEN="your-token"
-./moviematch
-```
-
-### Option 3: Build from Source
-
-For development or custom modifications:
-
-```bash
-# Prerequisites: Deno, Node.js, Just
-# Install from: https://deno.land, https://nodejs.org, https://just.systems
-
-# Clone and build
-git clone https://github.com/joszuijderwijk/moviematch.git
-cd moviematch
-
-# Set your Plex credentials
-export PLEX_URL="https://your-plex-server.com"
-export PLEX_TOKEN="your-plex-token"
-
-# Run the build script
-chmod +x build.sh
-./build.sh linux-amd64 /path/to/docker/folder
-```
-
-The script will build the UI, compile the binary, create a Docker image, and
-start moviematch with docker-compose.
-
-## Deployment
-
-### Docker Compose (Recommended)
-
-The easiest deployment method for servers:
-
-```bash
-git clone https://github.com/joszuijderwijk/moviematch.git
-cd moviematch
-
-# Configure with your Plex server
-cp .env.example .env
-nano .env  # Edit PLEX_URL and PLEX_TOKEN
-
-# Deploy
-docker-compose -f docker-compose.prod.yml up -d
-
-# View logs
-docker-compose -f docker-compose.prod.yml logs -f
-```
 
 ### Image Sources
 
@@ -132,46 +57,11 @@ docker-compose -f docker-compose.prod.yml logs -f
 
 - Trailer button in the card info panel (opens a YouTube trailer search)
 - External ratings from Plex metadata (IMDb/Rotten Tomatoes where available)
-- **Rating filters**: Filter movies by IMDb/critic scores and audience ratings when creating a room
+- Rating filters: Filter movies by IMDb/critic scores and audience ratings when creating a room
 - Expanded card details (descriptions + improved metadata display)
 - Updated translations and UI copy
 - Docker images published to both DockerHub and GHCR
 
-### Using Rating Filter
-
-When creating a room, you can filter movies by their rating score:
-
-- **Rating (0-10)**: Filters by movie ratings (uses IMDb/audience score when available)
-
-Supported operators:
-- `is` - exact match
-- `is not` - exclude exact value
-- `is greater than` - minimum rating
-- `is less than` - maximum rating
-
-Example: To show only movies rated 7.0 or higher, select "Rating (0-10)" → "is greater than" → type "7"
-
-## Creating a Release
-
-To create and publish a new release:
-
-1. **Update the version** in the [VERSION](./VERSION) file
-2. **Update release notes** in
-   [RELEASE_NOTES.markdown](./RELEASE_NOTES.markdown)
-3. **Commit and tag:**
-   ```bash
-   git add VERSION RELEASE_NOTES.markdown
-   git commit -m "release: version 2.0.0"
-   git tag v2.0.0
-   git push origin main v2.0.0
-   ```
-
-The release workflow will automatically:
-
-- Run tests on multiple platforms (Linux, macOS, Windows)
-- Build binaries for Linux (amd64)
-- Create a GitHub Release with binaries
-- Push Docker images to GHCR and DockerHub
 
 ## Configuration
 
