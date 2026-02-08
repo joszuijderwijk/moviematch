@@ -132,9 +132,46 @@ docker-compose -f docker-compose.prod.yml logs -f
 
 - Trailer button in the card info panel (opens a YouTube trailer search)
 - External ratings from Plex metadata (IMDb/Rotten Tomatoes where available)
+- **Rating filters**: Filter movies by IMDb/critic scores and audience ratings when creating a room
 - Expanded card details (descriptions + improved metadata display)
 - Updated translations and UI copy
 - Docker images published to both DockerHub and GHCR
+
+### Using Rating Filter
+
+When creating a room, you can filter movies by their rating score:
+
+- **Rating (0-10)**: Filters by movie ratings (uses IMDb/audience score when available)
+
+Supported operators:
+- `is` - exact match
+- `is not` - exclude exact value
+- `is greater than` - minimum rating
+- `is less than` - maximum rating
+
+Example: To show only movies rated 7.0 or higher, select "Rating (0-10)" → "is greater than" → type "7"
+
+## Creating a Release
+
+To create and publish a new release:
+
+1. **Update the version** in the [VERSION](./VERSION) file
+2. **Update release notes** in
+   [RELEASE_NOTES.markdown](./RELEASE_NOTES.markdown)
+3. **Commit and tag:**
+   ```bash
+   git add VERSION RELEASE_NOTES.markdown
+   git commit -m "release: version 2.0.0"
+   git tag v2.0.0
+   git push origin main v2.0.0
+   ```
+
+The release workflow will automatically:
+
+- Run tests on multiple platforms (Linux, macOS, Windows)
+- Build binaries for Linux (amd64)
+- Create a GitHub Release with binaries
+- Push Docker images to GHCR and DockerHub
 
 ## Configuration
 

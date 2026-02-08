@@ -115,6 +115,33 @@ export const createProvider = (
         }
       }
 
+      // Check if rating field exists in Field metadata and add it if not present
+      for (const type of meta.Type) {
+        if (availableTypes.includes(type.type as LibraryType) && type.Field) {
+          for (const field of type.Field) {
+            // Add rating field if it exists in Field metadata but not in filters
+            if (field.key === "rating" && !filters.has(field.key)) {
+              filters.set(field.key, {
+                title: "Rating (0-10)",
+                key: field.key,
+                type: field.type,
+                libraryTypes: [type.type as LibraryType],
+              });
+            }
+          }
+        }
+      }
+
+      // Fallback: Ensure rating filter is available even if not in Plex metadata
+      if (!filters.has("rating")) {
+        filters.set("rating", {
+          title: "Rating (0-10)",
+          key: "rating",
+          type: "integer",
+          libraryTypes: ["movie", "show"],
+        });
+      }
+
       const filterTypes = meta.FieldType.reduce(
         (acc, _: FieldType) => ({
           ...acc,
@@ -178,14 +205,22 @@ export const createProvider = (
       return api.getDeepLink(key, { type: linkType });
     },
     getMedia: async ({ filters }) => {
+      // Separate rating filters from Plex-supported filters
+      const ratingFilters = filters?.filter(f => 
+        f.key === "rating"
+      ) ?? [];
+      
+      const plexFilters = filters?.filter(f => 
+        f.key !== "rating"
+      );
+
       const filterParams: Record<string, string> = filtersToPlexQueryString(
-        filters,
+        plexFilters,
       );
 
       const libraries: Library[] = await getLibraries();
 
       const media: Media[] = [];
-
       for (const library of libraries) {
         const libraryItems = await api.getLibraryItems(
           library.key,
@@ -200,7 +235,8 @@ export const createProvider = (
               );
               posterUrl = `/api/poster/${id}/${metadataId}/${thumbId}`;
             }
-            media.push({
+            
+            const mediaItem: Media = {
               id: libraryItem.guid,
               type: libraryItem.type as LibraryType,
               title: libraryItem.title,
@@ -211,14 +247,51 @@ export const createProvider = (
               linkUrl: `/api/link/${id}/${libraryItem.key}`,
               genres: libraryItem.Genre?.map((_) => _.tag) ?? [],
               duration: Number(libraryItem.duration) || 0,
-              rating: Number(libraryItem.rating) || 0,
+              rating: libraryItem.rating ? Number(libraryItem.rating) : undefined,
               ratingImage: libraryItem.ratingImage,
               audienceRating: libraryItem.audienceRating
                 ? Number(libraryItem.audienceRating)
                 : undefined,
               audienceRatingImage: libraryItem.audienceRatingImage,
               contentRating: libraryItem.contentRating,
-            });
+            };
+            
+            // Apply client-side rating filters
+            let includeItem = true;
+            for (const filter of ratingFilters) {
+              const filterValue = Number(filter.value[0]);
+              // IMDb scores come through as audienceRating
+              const itemValue = mediaItem.audienceRating || mediaItem.rating || 0;
+              
+              switch (filter.operator) {
+                case "=":
+                case "==":
+                  if (itemValue !== filterValue) includeItem = false;
+                  break;
+                case "!=":
+                case "!==":
+                  if (itemValue === filterValue) includeItem = false;
+                  break;
+                case ">>=":
+                case ">=":
+                  if (itemValue < filterValue) includeItem = false;
+                  break;
+                case "<<=":
+                case "<=":
+                  if (itemValue > filterValue) includeItem = false;
+                  break;
+                default:
+                  break;
+              }
+              
+              if (!includeItem) {
+                break;
+              }
+            }
+            
+            if (includeItem) {
+              media.push(mediaItem);
+            }
           }
         }
       }

@@ -1,5 +1,9 @@
 # Release Notes
 
+## v2.0.7
+
+- [Feature] Allowed filtering on IMDb score
+
 ## v2.0.0-beta.2
 
 - [Bugfix] You can now toggle the user menu by tapping the avatar multiple times

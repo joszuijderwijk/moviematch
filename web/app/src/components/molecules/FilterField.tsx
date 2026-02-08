@@ -32,13 +32,14 @@ export const FilterField = ({
   const [value, setValue] = useState<FilterValue[]>([]);
 
   useEffect(() => {
-    if (key !== "") {
+    // Don't request suggestions for rating filter - users should input numbers directly
+    if (key !== "" && key !== "rating") {
       requestSuggestions(key);
     }
   }, [key]);
 
   useEffect(() => {
-    if (key && operator && value) {
+    if (key && operator && value && value.length > 0) {
       onChange({ key, operator, value: value.map((_) => _.value) });
     } else {
       onChange(null);

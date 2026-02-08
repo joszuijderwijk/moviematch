@@ -209,7 +209,10 @@ export class PlexApi {
     return this.fetch<LibraryItems>(
       `/library/sections/${key}/all`,
       {
-        searchParams: filters,
+        searchParams: {
+          ...filters,
+          "includeAdvanced": "1",
+        },
       },
     );
   }

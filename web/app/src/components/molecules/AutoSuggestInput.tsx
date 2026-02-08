@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useCombobox,
   UseComboboxGetItemPropsOptions,
@@ -26,6 +26,12 @@ export const AutoSuggestInput = ({
   value,
 }: AutoSuggestInputProps) => {
   const [inputValue, setInputValue] = useState<string>("");
+  const inputValueRef = useRef<string>("");
+  
+  useEffect(() => {
+    inputValueRef.current = inputValue;
+  }, [inputValue]);
+  
   const {
     getDropdownProps,
     addSelectedItem,
@@ -78,6 +84,10 @@ export const AutoSuggestInput = ({
     stateReducer: (_state, { changes, type }) => {
       switch (type) {
         case useCombobox.stateChangeTypes.InputKeyDownEnter:
+          return {
+            ...changes,
+            isOpen: false, // Close menu when Enter is pressed
+          };
         case useCombobox.stateChangeTypes.ItemClick:
           return {
             ...changes,
@@ -86,16 +96,45 @@ export const AutoSuggestInput = ({
       }
       return changes;
     },
-    onStateChange: ({ inputValue, type, selectedItem }) => {
+    onStateChange: ({ inputValue: newInputValue, type, selectedItem }) => {
       switch (type) {
         case useCombobox.stateChangeTypes.InputChange:
-          setInputValue(inputValue!);
+          setInputValue(newInputValue ?? "");
           break;
         case useCombobox.stateChangeTypes.InputKeyDownEnter:
-        case useCombobox.stateChangeTypes.ItemClick:
-          if (typeof selectedItem?.value === "string") {
-            setInputValue("");
+          if (selectedItem) {
             addSelectedItem(selectedItem);
+            setInputValue("");
+          } else {
+            const currentValue = inputValueRef.current.trim();
+            if (currentValue !== "") {
+              const manualItem: FilterValue = {
+                title: currentValue,
+                value: currentValue,
+              };
+              addSelectedItem(manualItem);
+              setInputValue("");
+            }
+          }
+          break;
+        case useCombobox.stateChangeTypes.ItemClick:
+          if (selectedItem) {
+            addSelectedItem(selectedItem);
+            setInputValue("");
+          }
+          break;
+        case useCombobox.stateChangeTypes.InputBlur:
+          // Commit typed value on blur so clicking "Create Room" doesn't lose it
+          {
+            const currentValue = inputValueRef.current.trim();
+            if (currentValue !== "") {
+              const manualItem: FilterValue = {
+                title: currentValue,
+                value: currentValue,
+              };
+              addSelectedItem(manualItem);
+              setInputValue("");
+            }
           }
           break;
         default:

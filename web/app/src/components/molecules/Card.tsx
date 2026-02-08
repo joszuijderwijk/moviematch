@@ -113,9 +113,6 @@ export const Card = forwardRef<HTMLDivElement & HTMLAnchorElement, CardProps>(
               <div className={styles.moreInfoMetadata}>
                 <Pill>{media.year}</Pill>
                 <Pill>{formatTime(+media.duration)}</Pill>
-                <Pill>
-                  <StarIcon height="0.8rem" width="0.5rem" /> {media.rating}
-                </Pill>
                 {media.ratingImage && externalRatingValue !== null && (
                   <Pill>
                     {externalRatingLabel} {externalRatingValue}
@@ -136,7 +133,7 @@ export const Card = forwardRef<HTMLDivElement & HTMLAnchorElement, CardProps>(
                 )}
                 {media.genres.map((genre) => <Pill key={genre}>{genre}</Pill>)}
                 <Pill href={trailerUrl}>
-                  <Tr name="TRAILER" />
+                  <Tr name="TRAILER" /> <ShareIcon />
                 </Pill>
                 {!href && (
                   <Pill href={media.linkUrl}>

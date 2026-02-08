@@ -212,7 +212,7 @@ export interface Media {
   linkUrl: string;
   genres: string[];
   duration: number;
-  rating: number;
+  rating?: number;
   ratingImage?: string;
   audienceRating?: number;
   audienceRatingImage?: string;
